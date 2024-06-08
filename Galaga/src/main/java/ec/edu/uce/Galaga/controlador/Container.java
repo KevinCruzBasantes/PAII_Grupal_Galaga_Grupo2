@@ -27,13 +27,46 @@ public class Container {
     Random random = new Random();
     Line line = new Line();
     boolean gameOver = false;
-
+    private int level;
+    private int score;
     public Container() {
         for (int i = 0; i < 5; i++) {
             addOpponent();
         }
+        level = 1;
+        score = 0;
+    }
+    public void increaseScore(int points) {
+        score += points;
+        checkLevelUp();
+    }
+    public void updateLevel() {
+        //...
+        if (level == 2) {
+            // Lógica para el nivel 2
+        } else if (level == 3) {
+            // Lógica para el nivel 3
+        }
+        //...
+    }
+    public int getLevel() {
+        return level;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    private void checkLevelUp() {
+        if (score >= 50) {
+            level++;
+            score = 0; // Resetear el score
+            opponents.clear(); // Resetear los enemigos
+            for (int i = 0; i < 5; i++) {
+                addOpponent(); // Agregar nuevos enemigos
+            }
+        }
+    }
     private void addOpponent() {
         boolean positionFree;
         int randomX, fixedY = 0; // En el borde superior
@@ -58,9 +91,15 @@ public class Container {
             for (Opponents opponent : opponents) {
                 opponent.draw(graphics);
             }
+            List<Bullet> destroyedBullets = new ArrayList<>();
             for (Bullet bullet : heroBullets) {
-                bullet.draw(graphics);
+                if (bullet.isDestroyed()) {
+                    destroyedBullets.add(bullet);
+                } else {
+                    bullet.draw(graphics);
+                }
             }
+            heroBullets.removeAll(destroyedBullets);
             for (Bullet bullet : opponentBullets) {
                 bullet.draw(graphics);
             }
@@ -118,8 +157,10 @@ public class Container {
                 while (opponentIterator.hasNext()) {
                     Opponents opponent = opponentIterator.next();
                     if (opponent.checkCollision(bullet)) {
-                        bulletIterator.remove();
-                        opponentIterator.remove();
+                        bullet.setDestroyed(true); // Establecer isDestroyed en true
+                        bulletIterator.remove(); // Eliminar la bala que chocó con el enemigo
+                        opponentIterator.remove(); // Eliminar el enemigo que fue destruido
+                        increaseScore(10); // Sumar 10 puntos al score
                         break;
                     }
                 }
