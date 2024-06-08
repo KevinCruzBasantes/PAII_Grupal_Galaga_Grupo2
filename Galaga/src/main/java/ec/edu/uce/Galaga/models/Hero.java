@@ -5,32 +5,6 @@ import java.awt.Graphics;
 import java.awt.Polygon;
 
 public class Hero implements Drawable, Movable, Shootable {
-    private int score;
-    private int level;
-    public Hero() {
-        score=0;
-        level=1;
-    }
-    public void increaseScore(int points) {
-        score += points;
-        checkLevelUp();
-    }
-    private void checkLevelUp() {
-        if (score >= 100 && level == 1) {
-            level = 2;
-            // Desbloquear características del nivel 2
-        } else if (score >= 500 && level == 2) {
-            level = 3;
-            // Desbloquear características del nivel 3
-        } else if (score >= 2000 && level == 5) {
-            level = 6;
-            // Desbloquear características del nivel 6
-        }
-        //...
-    }
-    public int getLevel() {
-        return level;
-    }
 
     public int[] cord_x = {400, 450, 350};
     public int[] cord_y = {500, 550, 550};
