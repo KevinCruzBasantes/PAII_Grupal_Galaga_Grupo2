@@ -10,7 +10,7 @@ public class Hero implements Drawable, Movable, Shootable {
     public int[] cord_y = {500, 550, 550};
     private int lives = 100; // Contador de vidas
     private int health = 100; // Vida del héroe
-
+int damage;
     @Override
     public void draw(Graphics graphics) {
         graphics.setColor(Color.WHITE);
@@ -63,11 +63,10 @@ public class Hero implements Drawable, Movable, Shootable {
         return heroPolygon.contains(bullet.getX(), bullet.getY());
     }
 
-    public void decreaseLife() {
+    public void decreaseLife(int opponentDamage) {
         if (lives > 0) {
-            lives-=5;
-            // Disminuir la vida del héroe en 5 cada vez que se impacta con una bala
-            health -= 5;
+            lives -= damage;
+            health -= damage;
         }
     }
 
