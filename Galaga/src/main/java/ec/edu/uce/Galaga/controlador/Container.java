@@ -5,7 +5,11 @@ import ec.edu.uce.Galaga.models.Hero;
 import ec.edu.uce.Galaga.models.Line;
 import ec.edu.uce.Galaga.models.Opponents;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -151,5 +155,9 @@ public class Container {
 
     public int getHeroLives() {
         return hero.getLives();
+    }
+
+    public int getHeroHealth() {
+        return hero.getHealth();
     }
 }

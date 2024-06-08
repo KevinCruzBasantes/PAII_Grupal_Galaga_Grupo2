@@ -3,13 +3,13 @@ package ec.edu.uce.Galaga.models;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 
 public class Hero implements Drawable, Movable, Shootable {
 
     public int[] cord_x = {400, 450, 350};
     public int[] cord_y = {500, 550, 550};
-    private int lives = 3; // Contador de vidas
+    private int lives = 100; // Contador de vidas
+    private int health = 100; // Vida del héroe
 
     @Override
     public void draw(Graphics graphics) {
@@ -65,11 +65,17 @@ public class Hero implements Drawable, Movable, Shootable {
 
     public void decreaseLife() {
         if (lives > 0) {
-            lives--;
+            lives-=5;
+            // Disminuir la vida del héroe en 5 cada vez que se impacta con una bala
+            health -= 5;
         }
     }
 
     public int getLives() {
         return lives;
+    }
+
+    public int getHealth() {
+        return health;
     }
 }
