@@ -52,7 +52,7 @@ public class GameFrame extends JFrame implements KeyListener {
     private void drawLives(Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Lives: " + container.getHeroLives(), 10, 20);
+        g.drawString("Lives: " + container.getHeroLives() + " | Score: " + container.getScore(), 10, 20);
     }
 
     @Override
@@ -67,6 +67,14 @@ public class GameFrame extends JFrame implements KeyListener {
                 break;
             case KeyEvent.VK_SPACE:
                 container.drawShoot(getGraphics());
+                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    container.drawShoot(getGraphics());
+                    if (container.getLevel() == 2) {
+                        // Lógica para el nivel 2
+                    } else if (container.getLevel() == 3) {
+                        // Lógica para el nivel 3
+                    }
+                }
                 break;
         }
         repaint();

@@ -8,6 +8,7 @@ public class Bullet implements Drawable, Movable {
 
     private int x, y;
     private Direction direction;
+    private boolean isDestroyed;
 
     public enum Direction {
         UP, DOWN
@@ -17,6 +18,7 @@ public class Bullet implements Drawable, Movable {
         this.x = x;
         this.y = y;
         this.direction = direction;
+        this.isDestroyed = false;
     }
 
     @Override
@@ -60,5 +62,12 @@ public class Bullet implements Drawable, Movable {
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, 10, 10);
+    }
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    public void setDestroyed(boolean isDestroyed) {
+        this.isDestroyed = isDestroyed;
     }
 }
