@@ -4,18 +4,18 @@ import ec.edu.uce.Galaga.models.Bullet;
 import ec.edu.uce.Galaga.models.Hero;
 import ec.edu.uce.Galaga.models.Line;
 import ec.edu.uce.Galaga.models.Opponents;
+import ec.edu.uce.Galaga.models.SuperOpponent;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.*;
 
-
 public class Container {
 
     final int SCREEN_WIDTH = 700;
-    final int SCREEN_HEIGHT = 600; // Cambiar para coincidir con el tamaño del frame
-    final int OPPONENT_SIZE = 100; // Tamaño aproximado del enemigo para evitar superposición
+    final int SCREEN_HEIGHT = 600;
+    final int OPPONENT_SIZE = 100;
     Hero hero = new Hero();
     List<Opponents> opponents = new ArrayList<>();
     List<Bullet> heroBullets = new ArrayList<>();
@@ -23,24 +23,22 @@ public class Container {
     Random random = new Random();
     Line line = new Line();
     boolean gameOver = false;
-    // Variable para rastrear el tiempo transcurrido desde el último disparo de los oponentes
     private long lastOpponentShotTime = 0;
-    private static final long[] LEVEL_SHOOT_DELAYS = {4000, 2000}; // Tiempo de disparo para cada nivel en milisegundos
-
-    // Variables para la gestión del nivel y la puntuación
+    private static final long[] LEVEL_SHOOT_DELAYS = {8000, 4000};
     public int score = 0;
     public int level = 1;
-    int SCORE_PER_LEVEL = 25; // Puntuación para pasar al siguiente nivel
-    int opponentSpeed = 2; // Velocidad inicial de los oponentes
-    int opponentShootFrequency = 5; // Frecuencia inicial de disparo de los oponentes
-    int opponentDamage = 5; // Daño inicial de los oponentes
+    int SCORE_PER_LEVEL = 25;
+    int opponentSpeed = 2;
+    int opponentShootFrequency = 5;
+    int opponentDamage = 5;
+
+    public SuperOpponent superOpponent;
 
     public Container() {
         initializeLevel(level);
     }
 
     private void initializeLevel(int level) {
-
         switch (level) {
             case 1:
                 for (int i = 0; i < 5; i++) {
@@ -53,23 +51,24 @@ public class Container {
                 for (int i = 0; i < 10; i++) {
                     addOpponent();
                 }
-                opponentShootFrequency = 3;
+                opponentShootFrequency = 10;
                 opponentDamage = 10;
                 break;
-            // Otros niveles si es necesario
+            case 3:
+                superOpponent = new SuperOpponent(300, 50);
+                break;
             default:
-                // Nivel no implementado
                 break;
         }
     }
 
     private void addOpponent() {
         boolean positionFree;
-        int randomX, randomY; // Coordenadas aleatorias tanto en X como en Y
+        int randomX, randomY;
         do {
             positionFree = true;
             randomX = random.nextInt(SCREEN_WIDTH - OPPONENT_SIZE/2);
-            randomY = random.nextInt(200); // Por ejemplo, en el rango superior de la pantalla
+            randomY = random.nextInt(200);
 
             for (Opponents opponent : opponents) {
                 if (Math.abs(opponent.getX() - randomX) < OPPONENT_SIZE && Math.abs(opponent.getY() - randomY) < OPPONENT_SIZE) {
@@ -93,6 +92,9 @@ public class Container {
             }
             for (Bullet bullet : opponentBullets) {
                 bullet.draw(graphics);
+            }
+            if (level == 3 && superOpponent != null) {
+                superOpponent.draw(graphics);
             }
             line.draw(graphics);
         } else {
@@ -128,18 +130,18 @@ public class Container {
     public void update() {
         if (!gameOver) {
             try {
-                // Mover balas del héroe hacia arriba
+                // Movimiento de balas del héroe hacia arriba
                 for (Bullet bullet : heroBullets) {
                     bullet.moveUp(5);
                 }
 
-                // Mover balas de los oponentes hacia abajo
+                // Movimiento de balas de los oponentes hacia abajo
                 for (Bullet bullet : opponentBullets) {
                     bullet.moveDown(5);
                 }
 
-                // Mover enemigos hacia abajo
-                moveDown(opponentSpeed);  // Ajusta la velocidad según sea necesario
+                // Movimiento de los oponentes hacia abajo
+                moveDown(opponentSpeed);
 
                 // Verificar colisiones de balas del héroe con los oponentes
                 Iterator<Bullet> bulletIterator = heroBullets.iterator();
@@ -150,23 +152,17 @@ public class Container {
                         Opponents opponent = opponentIterator.next();
                         if (opponent.checkCollision(bullet)) {
                             bulletIterator.remove();
-
-                            // Reduce una vida al enemigo si es nivel 2, si su vida llega a cero, elimínalo de la lista
                             if (level == 2) {
                                 if (opponent.isDestroyed()) {
                                     opponentIterator.remove();
-                                    // Incrementa la puntuación si el enemigo es eliminado
-                                    score += 10; // Suma 10 puntos por enemigo eliminado en nivel 2
-                                    checkLevelUp(); // Verifica si es necesario pasar al siguiente nivel
+                                    score += 10;
+                                    checkLevelUp();
                                 }
                             } else {
-                                // Si es nivel 1, elimina al enemigo directamente
                                 opponentIterator.remove();
-                                // Incrementa la puntuación si el enemigo es eliminado
-                                score += 5; // Suma 5 puntos por enemigo eliminado en nivel 1
-                                checkLevelUp(); // Verifica si es necesario pasar al siguiente nivel
+                                score += 5;
+                                checkLevelUp();
                             }
-
                             break;
                         }
                     }
@@ -188,7 +184,6 @@ public class Container {
                 long shootDelay = LEVEL_SHOOT_DELAYS[level - 1];
                 if (currentTime - lastOpponentShotTime >= shootDelay) {
                     try {
-                        // Los oponentes disparan una bala
                         ListIterator<Opponents> opponentIterator = opponents.listIterator();
                         while (opponentIterator.hasNext()) {
                             Opponents opponent = opponentIterator.next();
@@ -197,7 +192,6 @@ public class Container {
                                 opponentBullets.add(opponent.shootFromLeft());
                             }
                         }
-                        // Reiniciar el tiempo para el próximo disparo
                         lastOpponentShotTime = currentTime;
                     } catch (ConcurrentModificationException e) {
                         System.err.println("ConcurrentModificationException caught: " + e.getMessage());
@@ -214,18 +208,73 @@ public class Container {
                         break;
                     }
                 }
+
+                // Manejar el SuperOpponent si estamos en el nivel 3
+                if (level == 3 && superOpponent != null) {
+                    // Verificar si el SuperOpponent ha sido destruido
+                    if (superOpponent.getHealth() <= 0) {
+                        superOpponent = null;
+                        score += 50; // Aumentar la puntuación por destruir al SuperOpponent
+                        checkLevelUp(); // Verificar si se ha alcanzado la puntuación necesaria para pasar de nivel
+                    } else {
+                        // Si el SuperOpponent todavía está activo, manejar su comportamiento
+                        // Verificar si puede disparar y realizar el disparo si es posible
+                        long currentTimeSuperOpponent = System.currentTimeMillis();
+                        if (superOpponent.canShoot(currentTimeSuperOpponent)) {
+                            for (int i = 0; i < 3; i++) {
+                                opponentBullets.add(superOpponent.shoot());
+                            }
+                            superOpponent.resetShootTime(currentTimeSuperOpponent);
+                        }
+
+                        // Verificar colisiones entre las balas del héroe y el SuperOpponent
+                        Iterator<Bullet> bulletIteratorHero = heroBullets.iterator();
+                        while (bulletIteratorHero.hasNext()) {
+                            Bullet bullet = bulletIteratorHero.next();
+                            if (superOpponent.checkCollision(bullet)) {
+                                bulletIteratorHero.remove(); // Eliminar la bala que ha colisionado con el SuperOpponent
+                                // Calcular y aplicar el daño al SuperOpponent
+                                if (superOpponent.getHealth() > 0) {
+                                    int damage = calculateSuperOpponentDamage(superOpponent.getHealth());
+                                    superOpponent.decreaseHealth(damage);
+                                }
+                            }
+                        }
+                    }
+                }
             } catch (Exception e) {
-                // Manejo de la excepción
+                // Manejar excepciones aquí
                 System.err.println("Se ha producido una excepción en el método update: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
+
+
+    private int calculateSuperOpponentDamage(int health) {
+        if (health < 50) {
+            return 15; // Resta 15 puntos si la vida es menor a 50
+        } else if (health < 75) {
+            return 10; // Resta 10 puntos si la vida está entre 50 y 75
+        } else {
+            return 5; // Resta 5 puntos si la vida es mayor o igual a 75
+        }
+    }
+
     private void checkLevelUp() {
-        if (score >= SCORE_PER_LEVEL * level) {
+        if (score >= SCORE_PER_LEVEL * level && level < 3) { // Solo aumentar el nivel si el nivel actual es menor que 3
             level++;
-            if (level == 2) {
-                initializeLevel(level);
+            switch (level) {
+                case 2:
+                    initializeLevel(level);
+                    break;
+                case 3:
+                    if (superOpponent == null) {
+                        initializeLevel(level);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
