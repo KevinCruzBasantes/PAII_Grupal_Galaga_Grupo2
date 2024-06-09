@@ -2,7 +2,6 @@ package ec.edu.uce.Galaga.models;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
 public class SuperOpponent extends Opponents {
 
@@ -26,9 +25,13 @@ public class SuperOpponent extends Opponents {
         graphics.fillRect(cord_x[0], cord_y[0] - 10, health, 5);
     }
 
-    @Override
-    public Bullet shoot() {
-        return new Bullet(cord_x[3], cord_y[3] + 10, Bullet.Direction.DOWN);
+    // Método para que el SuperOpponent dispare tres balas
+    public Bullet[] tripleshoot() {
+        Bullet[] bullets = new Bullet[3];
+        bullets[0] = new Bullet(cord_x[3], cord_y[3] + 10, Bullet.Direction.DOWN);
+        bullets[1] = new Bullet(cord_x[2], cord_y[2] + 10, Bullet.Direction.DOWN);
+        bullets[2] = new Bullet(cord_x[4], cord_y[4] + 10, Bullet.Direction.DOWN);
+        return bullets;
     }
 
     public boolean canShoot(long currentTime) {

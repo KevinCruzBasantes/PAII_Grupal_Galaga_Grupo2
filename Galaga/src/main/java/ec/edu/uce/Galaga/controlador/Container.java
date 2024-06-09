@@ -24,7 +24,7 @@ public class Container {
     Line line = new Line();
     boolean gameOver = false;
     private long lastOpponentShotTime = 0;
-    private static final long[] LEVEL_SHOOT_DELAYS = {8000, 4000};
+    private static final long[] LEVEL_SHOOT_DELAYS = {8000, 4000, 2000};
     public int score = 0;
     public int level = 1;
     int SCORE_PER_LEVEL = 25;
@@ -51,7 +51,7 @@ public class Container {
                 for (int i = 0; i < 10; i++) {
                     addOpponent();
                 }
-                opponentShootFrequency = 10;
+                opponentShootFrequency = 80;
                 opponentDamage = 10;
                 break;
             case 3:
@@ -221,9 +221,8 @@ public class Container {
                         // Verificar si puede disparar y realizar el disparo si es posible
                         long currentTimeSuperOpponent = System.currentTimeMillis();
                         if (superOpponent.canShoot(currentTimeSuperOpponent)) {
-                            for (int i = 0; i < 3; i++) {
-                                opponentBullets.add(superOpponent.shoot());
-                            }
+                            Bullet[] superOpponentBullets = superOpponent.tripleshoot(); // Disparar tres balas
+                            opponentBullets.addAll(Arrays.asList(superOpponentBullets)); // Agregar las balas a la lista de balas de los oponentes
                             superOpponent.resetShootTime(currentTimeSuperOpponent);
                         }
 
@@ -242,6 +241,7 @@ public class Container {
                         }
                     }
                 }
+
             } catch (Exception e) {
                 // Manejar excepciones aquí
                 System.err.println("Se ha producido una excepción en el método update: " + e.getMessage());
