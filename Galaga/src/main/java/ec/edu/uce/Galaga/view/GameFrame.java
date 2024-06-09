@@ -35,9 +35,6 @@ public class GameFrame extends JFrame implements KeyListener {
                 drawLives(g);
                 drawHeroHealthBar(g);
                 drawLine(g); // Dibujar la línea roja al final para que esté encima de la barra de vida
-                drawScore(g); // Dibujar la puntuación
-                drawLevel(g); // Dibujar el nivel
-
             }
         };
         contentPane.setBackground(Color.black);
@@ -53,17 +50,6 @@ public class GameFrame extends JFrame implements KeyListener {
             }
         });
         timer.start();
-    }
-    private void drawScore(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Score: " + container.score, 10, 550); // Posicionado debajo de la línea roja
-    }
-
-    private void drawLevel(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Level: " + container.level, 200, 550); // Posicionado debajo de la línea roja
     }
 
     private void drawLives(Graphics g) {

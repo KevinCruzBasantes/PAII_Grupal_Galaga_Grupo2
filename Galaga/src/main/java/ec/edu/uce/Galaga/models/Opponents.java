@@ -65,14 +65,6 @@ public class Opponents implements Drawable, Movable, Shootable {
         return new Bullet(cord_x[3], cord_y[3] + 10, Bullet.Direction.DOWN);
     }
 
-    public Bullet shootFromLeft() {
-        return new Bullet(cord_x[0], cord_y[0] + 10, Bullet.Direction.DOWN);
-    }
-
-    public Bullet shootFromRight() {
-        return new Bullet(cord_x[2], cord_y[2] + 10, Bullet.Direction.DOWN);
-    }
-
     public boolean checkCollision(Bullet bullet) {
         Rectangle opponentBounds = new Rectangle(cord_x[0], cord_y[0], cord_x[1] - cord_x[0], cord_y[2] - cord_y[0]);
         return opponentBounds.intersects(bullet.getBounds());
