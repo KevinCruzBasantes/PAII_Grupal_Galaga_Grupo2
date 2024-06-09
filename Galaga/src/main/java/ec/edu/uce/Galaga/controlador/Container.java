@@ -8,12 +8,8 @@ import ec.edu.uce.Galaga.models.Opponents;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 
 public class Container {
 
@@ -27,29 +23,56 @@ public class Container {
     Random random = new Random();
     Line line = new Line();
     boolean gameOver = false;
+    // Variables para la gestión del nivel y la puntuación
+    public int score = 0;
+    public int level = 1;
+    int SCORE_PER_LEVEL = 25; // Puntuación para pasar al siguiente nivel
+    int opponentSpeed = 2; // Velocidad inicial de los oponentes
+    int opponentShootFrequency = 5; // Frecuencia inicial de disparo de los oponentes
+    int opponentDamage = 5; // Daño inicial de los oponentes
 
     public Container() {
-        for (int i = 0; i < 5; i++) {
-            addOpponent();
+        initializeLevel(level);
+    }
+
+    private void initializeLevel(int level) {
+        switch (level) {
+            case 1:
+                for (int i = 0; i < 5; i++) {
+                    addOpponent(1); // Nivel 1: Enemigos con 1 vida
+                }
+                opponentDamage = 5;
+                break;
+            case 2:
+                for (int i = 0; i < 10; i++) {
+                    addOpponent(3); // Nivel 2: Enemigos con 3 vidas
+                }
+                opponentDamage = 10;
+                break;
+            // Otros niveles si es necesario
+            default:
+                // Nivel no implementado
+                break;
         }
     }
 
-    private void addOpponent() {
+    private void addOpponent(int lives) {
         boolean positionFree;
-        int randomX, fixedY = 0; // En el borde superior
+        int randomX, randomY; // Coordenadas aleatorias tanto en X como en Y
         do {
             positionFree = true;
-            randomX = random.nextInt(SCREEN_WIDTH);
+            randomX = random.nextInt(SCREEN_WIDTH - OPPONENT_SIZE / 2);
+            randomY = random.nextInt(200); // Por ejemplo, en el rango superior de la pantalla
 
             for (Opponents opponent : opponents) {
-                if (Math.abs(opponent.getX() - randomX) < OPPONENT_SIZE) {
+                if (Math.abs(opponent.getX() - randomX) < OPPONENT_SIZE && Math.abs(opponent.getY() - randomY) < OPPONENT_SIZE) {
                     positionFree = false;
                     break;
                 }
             }
         } while (!positionFree);
 
-        opponents.add(new Opponents(randomX, fixedY));
+        opponents.add(new Opponents(randomX, randomY, lives)); // Añadir enemigo con el número de vidas especificado
     }
 
     public void draw(Graphics graphics) {
@@ -99,7 +122,7 @@ public class Container {
         if (!gameOver) {
             // Mover balas del héroe hacia arriba
             for (Bullet bullet : heroBullets) {
-                bullet.moveUp(5);
+                bullet.moveUp(20);
             }
 
             // Mover balas de los oponentes hacia abajo
@@ -108,7 +131,7 @@ public class Container {
             }
 
             // Mover enemigos hacia abajo
-            moveDown(2);  // Ajusta la velocidad según sea necesario
+            moveDown(opponentSpeed);  // Ajusta la velocidad según sea necesario
 
             // Verificar colisiones de balas del héroe con los oponentes
             Iterator<Bullet> bulletIterator = heroBullets.iterator();
@@ -119,7 +142,13 @@ public class Container {
                     Opponents opponent = opponentIterator.next();
                     if (opponent.checkCollision(bullet)) {
                         bulletIterator.remove();
-                        opponentIterator.remove();
+
+                        if (opponent.isDestroyed()) {
+                            opponentIterator.remove();
+                            score += (level == 2) ? 10 : 5; // Suma puntos según el nivel
+                            checkLevelUp(); // Verifica si es necesario pasar al siguiente nivel
+                        }
+
                         break;
                     }
                 }
@@ -131,24 +160,39 @@ public class Container {
                 Bullet bullet = opponentBulletIterator.next();
                 if (hero.checkCollision(bullet)) {
                     opponentBulletIterator.remove();
-                    hero.decreaseLife();
+                    hero.decreaseLife(opponentDamage);
                     break;
                 }
             }
 
-            // Los oponentes disparan de forma aleatoria
-            if (random.nextInt(100) < 5) { // Probabilidad del 5% de disparar
-                for (Opponents opponent : opponents) {
+            // Control de disparo de los oponentes basado en la probabilidad
+            for (Opponents opponent : opponents) {
+                if (random.nextDouble() < 0.01) { // Probabilidad del 1% por cada frame
                     opponentBullets.add(opponent.shoot());
+                    if (level > 1) {
+                        opponentBullets.add(opponent.shootFromLeft());
+                    }
                 }
             }
 
-            // Verificar colisiones de los oponentes con la línea
-            for (Opponents opponent : opponents) {
+            // Verificar colisiones de los oponentes con la línea y eliminar los oponentes destruidos
+            Iterator<Opponents> opponentIterator = opponents.iterator();
+            while (opponentIterator.hasNext()) {
+                Opponents opponent = opponentIterator.next();
                 if (opponent.getLowestY() >= 420) {
+                    opponentIterator.remove();
                     gameOver = true;
                     break;
                 }
+            }
+        }
+    }
+
+    private void checkLevelUp() {
+        if (score >= SCORE_PER_LEVEL * level) {
+            level++;
+            if (level == 2) {
+                initializeLevel(level);
             }
         }
     }

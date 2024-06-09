@@ -1,8 +1,9 @@
 package ec.edu.uce.Galaga;
 
-import ec.edu.uce.Galaga.view.GameFrame;
 //import org.springframework.boot.SpringApplication;
 //import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import ec.edu.uce.Galaga.view.GameFrame;
 
 //@SpringBootApplication
 public class Main {
