@@ -6,8 +6,14 @@ public class Opponents implements Drawable, Movable, Shootable {
 
     int[] cord_x = new int[5];
     int[] cord_y = new int[5];
-    private int lives = 3;
+    private int lives;
+    private int health;
+    private final int MAX_HEALTH = 100;
     public Opponents(int randomX, int randomY) {
+        this(randomX, randomY, 3); // Inicializar con 3 vidas
+    }
+
+    public Opponents(int randomX, int randomY, int lives) {
         cord_x[0] = randomX;
         cord_x[1] = randomX + 100;
         cord_x[2] = randomX + 100;
@@ -19,6 +25,9 @@ public class Opponents implements Drawable, Movable, Shootable {
         cord_y[2] = randomY + 50;
         cord_y[3] = randomY + 25;
         cord_y[4] = randomY + 50;
+
+        this.lives = lives; // Establecer el número de vidas del enemigo
+        this.health = MAX_HEALTH;
     }
 
     @Override
@@ -59,9 +68,11 @@ public class Opponents implements Drawable, Movable, Shootable {
     public void draw(Graphics graphics, Drawable drawable) {
         // Implementación necesaria
     }
+
     public int getY() {
         return cord_y[0];
     }
+
     @Override
     public Bullet shoot() {
         return new Bullet(cord_x[3], cord_y[3] + 10, Bullet.Direction.DOWN);
@@ -69,6 +80,9 @@ public class Opponents implements Drawable, Movable, Shootable {
 
     public Bullet shootFromLeft() {
         return new Bullet(cord_x[0], cord_y[0] + 10, Bullet.Direction.DOWN);
+    }
+    public Bullet shootFromRight() {
+        return new Bullet(cord_x[2], cord_y[2] + 10, Bullet.Direction.DOWN);
     }
 
     // Método para verificar si el enemigo está eliminado

@@ -1,6 +1,7 @@
 package ec.edu.uce.Galaga.view;
 
 import ec.edu.uce.Galaga.controlador.Container;
+import ec.edu.uce.Galaga.models.Boss;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -34,12 +35,10 @@ public class GameFrame extends JFrame implements KeyListener {
                 container.draw(g);
                 drawLives(g);
                 drawHeroHealthBar(g);
-                drawLine(g);
-                drawScore(g);
-                drawLevel(g);
-                if (container.level == 3) {
-                    drawSuperOpponentHealthBar(g);
-                }
+                drawLine(g); // Dibujar la línea roja al final para que esté encima de la barra de vida
+                drawScore(g); // Dibujar la puntuación
+                drawLevel(g); // Dibujar el nivel
+
             }
         };
         contentPane.setBackground(Color.black);
@@ -56,6 +55,7 @@ public class GameFrame extends JFrame implements KeyListener {
         });
         timer.start();
     }
+
     private void drawScore(Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -65,7 +65,7 @@ public class GameFrame extends JFrame implements KeyListener {
     private void drawLevel(Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.PLAIN, 18));
-        g.drawString("Level: " + container.level, 200, 550); // Posicionado debajo de la línea roja
+        g.drawString("Level: " + container.level, 600, 550); // Posicionado debajo de la línea roja
     }
 
     private void drawLives(Graphics g) {
@@ -87,27 +87,10 @@ public class GameFrame extends JFrame implements KeyListener {
         g.drawRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight); // Borde blanco de la barra de vida
     }
 
-    private void drawSuperOpponentHealthBar(Graphics g) {
-        if (container.superOpponent != null) {
-            int health = container.superOpponent.getHealth();
-            int healthBarWidth = 100;
-            int healthBarHeight = 10;
-            int healthBarX = container.superOpponent.getCordX(0); // Usar el nuevo método getCordX()
-            int healthBarY = container.superOpponent.getCordY(0) - 15; // Usar el nuevo método getCordY()
-
-            g.setColor(Color.RED);
-            g.fillRect(healthBarX, healthBarY, health, healthBarHeight);
-            g.setColor(Color.WHITE);
-            g.drawRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
-        }
-
-    }
-
-
-
     private void drawLine(Graphics g) {
         g.setColor(Color.red);
         g.drawLine(0, 420, 784, 420); // Dibujar la línea roja en la posición deseada
+
     }
 
     @Override

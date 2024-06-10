@@ -64,11 +64,14 @@ int damage;
     }
 
     public void decreaseLife(int opponentDamage) {
-        if (health > 0) {
-            health -= opponentDamage;
+        if (lives > 0) {
+            lives -= opponentDamage; // Reducir las vidas según el daño recibido
+            health -= opponentDamage; // Reducir la vida del héroe según el daño recibido
+            if (lives < 0) {
+                lives = 0; // Asegurarse de que las vidas no sean negativas
+            }
             if (health < 0) {
-                health = 0;
-                // Aquí se podría manejar la lógica de game over si es necesario
+                health = 0; // Asegurarse de que la vida no sea negativa
             }
         }
     }

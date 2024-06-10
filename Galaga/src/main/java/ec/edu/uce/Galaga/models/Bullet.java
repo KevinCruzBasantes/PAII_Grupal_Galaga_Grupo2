@@ -63,11 +63,17 @@ public class Bullet implements Drawable, Movable {
     public Rectangle getBounds() {
         return new Rectangle(x, y, 10, 10);
     }
+
     public boolean isDestroyed() {
         return isDestroyed;
     }
 
     public void setDestroyed(boolean isDestroyed) {
         this.isDestroyed = isDestroyed;
+    }
+
+    // Método para obtener el daño de la bala
+    public int getDamage() {
+        return 0; // Daño estático de la bala
     }
 }
