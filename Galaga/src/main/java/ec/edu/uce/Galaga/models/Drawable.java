@@ -1,10 +1,10 @@
-package ec.edu.uce.Galaga.models;
+    package ec.edu.uce.Galaga.models;
 
-import java.awt.*;
+    import java.awt.*;
 
-public interface Drawable {
+    public interface Drawable {
 
-    public void draw(Graphics graphics);
-    public void draw(Graphics graphics, Drawable drawable);
+        public void draw(Graphics graphics);
+        public void draw(Graphics graphics, Drawable drawable);
 
-}
+    }

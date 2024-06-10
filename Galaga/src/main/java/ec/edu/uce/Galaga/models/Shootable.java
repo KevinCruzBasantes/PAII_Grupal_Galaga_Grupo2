@@ -1,6 +1,6 @@
-package ec.edu.uce.Galaga.models;
+       package ec.edu.uce.Galaga.models;
 
-public interface Shootable {
+       public interface Shootable {
 
-       public Bullet shoot();
-}
+              public Bullet shoot();
+       }
